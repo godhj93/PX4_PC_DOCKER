@@ -37,14 +37,29 @@ RUN apt-get install -y python-rosdep
 RUN rosdep init \
     && rosdep update
 
+RUN apt-get update
+RUN apt install -y ros-melodic-gazebo-ros
+RUN apt upgrade -y libignition-math2
+RUN apt install -y ros-melodic-mavros*
+RUN apt install -y ros-melodic-serial
+RUN apt install -y python3-catkin-tools
+RUN /opt/ros/melodic/lib/mavros/install_geographiclib_datasets.sh
+
+
 # Set the working directory in the container
 WORKDIR /root/
 
 # Clone PX4-Autopilot repository and run the setup script
-RUN git clone -b v1.13.0 https://github.com/PX4/PX4-Autopilot.git --recursive\
-    && /bin/bash /root/PX4-Autopilot/Tools/setup/ubuntu.sh
+RUN git clone -b v1.13.0 https://github.com/PX4/PX4-Autopilot.git --recursive
+RUN /bin/bash /root/PX4-Autopilot/Tools/setup/ubuntu.sh
 
+# Set environment variables for locale
+ENV LANG=C.UTF-8
+ENV LC_ALL=C.UTF-8
 
+# Add the content to .bashrc
+RUN echo "source /root/PX4-Autopilot/Tools/setup_gazebo.bash /root/PX4-Autopilot /root/PX4-Autopilot/build/px4_s$" >> /root/.bashrc \
+    && echo "export ROS_PACKAGE_PATH=\$ROS_PACKAGE_PATH:/root/PX4-Autopilot:/root/PX4-Autopilot/Tools/sitl_gazebo" >> /root/.bashrc
 
 # Specify the command to run on container start
 CMD ["/bin/bash"]
