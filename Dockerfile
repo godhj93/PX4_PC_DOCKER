@@ -39,7 +39,6 @@ RUN rosdep init \
 
 RUN apt-get update
 RUN apt install -y ros-melodic-gazebo-ros
-RUN apt upgrade -y libignition-math2
 RUN apt install -y ros-melodic-mavros*
 RUN apt install -y ros-melodic-serial
 RUN apt install -y python3-catkin-tools
@@ -61,5 +60,6 @@ ENV LC_ALL=C.UTF-8
 RUN echo "source /root/PX4-Autopilot/Tools/setup_gazebo.bash /root/PX4-Autopilot /root/PX4-Autopilot/build/px4_s$" >> /root/.bashrc \
     && echo "export ROS_PACKAGE_PATH=\$ROS_PACKAGE_PATH:/root/PX4-Autopilot:/root/PX4-Autopilot/Tools/sitl_gazebo" >> /root/.bashrc
 
+RUN apt upgrade -y libignition-math2
 # Specify the command to run on container start
 CMD ["/bin/bash"]
